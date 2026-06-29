@@ -129,6 +129,37 @@ http://localhost:5173
 
 ---
 
+## Vercel Deployment Settings
+
+Set these environment variables in Vercel before redeploying.
+
+Frontend project:
+
+```txt
+VITE_API_BASE_URL=https://ai-solutions-9n7a.vercel.app
+```
+
+Backend project:
+
+```txt
+CLIENT_ORIGIN=https://ai-solutions-black.vercel.app
+CLIENT_ORIGINS=http://localhost:5173,https://ai-solutions-black.vercel.app
+```
+
+The backend root page is available at:
+
+```txt
+https://ai-solutions-9n7a.vercel.app/
+```
+
+The backend API information endpoint is available at:
+
+```txt
+https://ai-solutions-9n7a.vercel.app/api
+```
+
+---
+
 ## Default Admin Login
 
 Use the following default admin account for local testing:
