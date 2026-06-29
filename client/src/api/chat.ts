@@ -1,3 +1,5 @@
+import { apiUrl } from "./config";
+
 export type ChatMessage = {
   role: "user" | "bot";
   text: string;
@@ -14,7 +16,7 @@ export class ChatApiError extends Error {
 }
 
 export async function sendChatMessage(messages: ChatMessage[]): Promise<string> {
-  const response = await fetch("/api/chat", {
+  const response = await fetch(apiUrl("/api/chat"), {
     method: "POST",
     headers: {
       "Content-Type": "application/json"

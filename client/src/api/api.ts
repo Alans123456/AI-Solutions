@@ -1,8 +1,9 @@
 import axios, { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 import JSONbig from "json-bigint";
+import { API_BASE_URL } from "./config";
 
 const localApi = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || undefined,
+  baseURL: API_BASE_URL || undefined,
   headers: {
     "Content-Type": "application/json"
   },
