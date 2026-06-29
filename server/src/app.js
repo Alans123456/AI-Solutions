@@ -16,29 +16,42 @@ dotenv.config();
 
 export const app = express();
 
-const allowedOrigins = (
-  process.env.CLIENT_ORIGINS ||
-  process.env.CLIENT_ORIGIN ||
-  "http://localhost:5173"
-)
-  .split(",")
-  .map((origin) => origin.trim())
-  .filter(Boolean);
+const defaultAllowedOrigins = [
+  "http://localhost:5173",
+  "https://ai-solutions-black.vercel.app",
+  "https://ai-solutions-9n7a.vercel.app"
+];
+
+const allowedOrigins = [
+  ...defaultAllowedOrigins,
+  ...(process.env.CLIENT_ORIGINS || process.env.CLIENT_ORIGIN || "")
+    .split(",")
+    .map((origin) => origin.trim())
+]
+  .filter(Boolean)
+  .filter((origin, index, origins) => origins.indexOf(origin) === index);
+
+function isAllowedOrigin(origin) {
+  if (!origin) return true;
+  if (allowedOrigins.includes("*") || allowedOrigins.includes(origin)) return true;
+  return /^https:\/\/ai-solutions-[a-z0-9-]+\.vercel\.app$/i.test(origin);
+}
+
+const corsOptions = {
+  origin(origin, callback) {
+    if (isAllowedOrigin(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(null, false);
+  },
+  credentials: true
+};
 
 app.use(helmet());
-app.use(
-  cors({
-    origin(origin, callback) {
-      if (!origin || allowedOrigins.includes("*") || allowedOrigins.includes(origin)) {
-        callback(null, true);
-        return;
-      }
-
-      callback(null, false);
-    },
-    credentials: true
-  })
-);
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 app.use(express.json({ limit: "3mb" }));
 app.use(morgan("dev"));
 
