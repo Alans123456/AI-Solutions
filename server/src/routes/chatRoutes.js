@@ -108,6 +108,40 @@ function latestUserMessage(messages) {
   return [...messages].reverse().find((message) => message.role === "user")?.text || "";
 }
 
+function configuredProvider() {
+  const requestedProvider = process.env.AI_PROVIDER?.trim().toLowerCase();
+  const providerKeys = {
+    gemini: process.env.GEMINI_API_KEY?.trim(),
+    deepseek: process.env.DEEPSEEK_API_KEY?.trim(),
+    github: process.env.GITHUB_MODELS_TOKEN?.trim() || process.env.GITHUB_TOKEN?.trim()
+  };
+
+  if (requestedProvider && providerKeys[requestedProvider]) {
+    return requestedProvider;
+  }
+
+  if (providerKeys.github) return "github";
+  if (providerKeys.deepseek) return "deepseek";
+  if (providerKeys.gemini) return "gemini";
+
+  return null;
+}
+
+function missingProviderMessage() {
+  const requestedProvider = process.env.AI_PROVIDER?.trim().toLowerCase();
+  if (requestedProvider === "github") {
+    return "GitHub Models is not configured on the server. Add GITHUB_MODELS_TOKEN to server/.env and restart the backend.";
+  }
+  if (requestedProvider === "deepseek") {
+    return "DeepSeek is not configured on the server. Add DEEPSEEK_API_KEY to server/.env and restart the backend.";
+  }
+  if (requestedProvider === "gemini") {
+    return "Gemini is not configured on the server. Add GEMINI_API_KEY to server/.env and restart the backend.";
+  }
+
+  return "AI chat is not configured on the server. Add one key to server/.env: GEMINI_API_KEY, DEEPSEEK_API_KEY, or GITHUB_MODELS_TOKEN, then restart the backend.";
+}
+
 async function getWebsiteData() {
   const entries = await Promise.all(
     contentTypes.map(async (type) => [type, await listContent(type)])
@@ -335,31 +369,17 @@ chatRoutes.post("/chat", async (req, res, next) => {
     }
 
     const systemPrompt = `${training}\n\n${buildWebsiteContext(websiteData)}`;
-    const provider = (
-      process.env.AI_PROVIDER ||
-      (process.env.GITHUB_MODELS_TOKEN || process.env.GITHUB_TOKEN
-        ? "github"
-        : process.env.DEEPSEEK_API_KEY
-          ? "deepseek"
-          : "gemini")
-    ).toLowerCase();
+    const provider = configuredProvider();
+    if (!provider) {
+      return res.status(503).json({ message: missingProviderMessage() });
+    }
+
     const reply =
       provider === "github"
         ? await getGithubReply(messages, systemPrompt)
         : provider === "deepseek"
           ? await getDeepSeekReply(messages, systemPrompt)
           : await getGeminiReply(messages, systemPrompt);
-
-    if (reply === null) {
-      return res.status(503).json({
-        message:
-          provider === "github"
-            ? "GitHub Models is not configured on the server. Add GITHUB_MODELS_TOKEN to server/.env and restart the backend."
-            : provider === "deepseek"
-            ? "DeepSeek is not configured on the server. Add DEEPSEEK_API_KEY to server/.env and restart the backend."
-            : "Gemini is not configured on the server. Add GEMINI_API_KEY to server/.env and restart the backend."
-      });
-    }
 
     return res.json({ reply: reply || "I could not generate a reply right now." });
   } catch (error) {
