@@ -1,4 +1,5 @@
 import api from "./api";
+import { arrayResponse } from "./response";
 
 export interface Career {
   _id: string;
@@ -45,12 +46,12 @@ export interface CareerApplication {
 
 export const getCareers = async (): Promise<{ jobs: Career[] }> => {
   const response = await api.get("/api/careers");
-  return response.data as { jobs: Career[] };
+  return arrayResponse<Career>(response.data, "jobs") as { jobs: Career[] };
 };
 
 export const getAdminCareers = async (): Promise<{ jobs: Career[] }> => {
   const response = await api.get("/api/admin/careers");
-  return response.data as { jobs: Career[] };
+  return arrayResponse<Career>(response.data, "jobs") as { jobs: Career[] };
 };
 
 export const createCareer = async (data: Omit<Career, "_id" | "isMock">) => {
@@ -75,7 +76,7 @@ export const applyForCareer = async (careerId: string, data: CareerApplicationPa
 
 export const getCareerApplications = async (): Promise<{ applications: CareerApplication[] }> => {
   const response = await api.get("/api/admin/career-applications");
-  return response.data as { applications: CareerApplication[] };
+  return arrayResponse<CareerApplication>(response.data, "applications") as { applications: CareerApplication[] };
 };
 
 export const updateCareerApplication = async (id: string, data: Partial<CareerApplication> & { notes?: string }) => {

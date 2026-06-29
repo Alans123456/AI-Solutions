@@ -1,4 +1,5 @@
 import api from "./api";
+import { arrayResponse, itemResponse } from "./response";
 
 export interface BlogPost {
   _id: string;
@@ -19,17 +20,17 @@ export interface BlogPost {
 
 export const getBlogPosts = async (): Promise<{ posts: BlogPost[] }> => {
   const response = await api.get("/api/blog");
-  return response.data as { posts: BlogPost[] };
+  return arrayResponse<BlogPost>(response.data, "posts") as { posts: BlogPost[] };
 };
 
 export const getBlogPost = async (id: string): Promise<{ post: BlogPost }> => {
   const response = await api.get(`/api/blog/${encodeURIComponent(id)}`);
-  return response.data as { post: BlogPost };
+  return itemResponse<BlogPost>(response.data, "post") as { post: BlogPost };
 };
 
 export const getAdminBlogPosts = async (): Promise<{ posts: BlogPost[] }> => {
   const response = await api.get("/api/admin/blog");
-  return response.data as { posts: BlogPost[] };
+  return arrayResponse<BlogPost>(response.data, "posts") as { posts: BlogPost[] };
 };
 
 export const createBlogPost = async (data: Omit<BlogPost, "_id" | "isMock">) => {

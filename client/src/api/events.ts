@@ -1,4 +1,5 @@
 import api from "./api";
+import { arrayResponse, itemResponse } from "./response";
 
 export interface Event {
   _id: string;
@@ -20,17 +21,17 @@ export interface Event {
 
 export const getEvents = async (): Promise<{ events: Event[] }> => {
   const response = await api.get("/api/events");
-  return response.data as { events: Event[] };
+  return arrayResponse<Event>(response.data, "events") as { events: Event[] };
 };
 
 export const getEvent = async (id: string): Promise<{ event: Event }> => {
   const response = await api.get(`/api/events/${encodeURIComponent(id)}`);
-  return response.data as { event: Event };
+  return itemResponse<Event>(response.data, "event") as { event: Event };
 };
 
 export const getAdminEvents = async (): Promise<{ events: Event[] }> => {
   const response = await api.get("/api/admin/events");
-  return response.data as { events: Event[] };
+  return arrayResponse<Event>(response.data, "events") as { events: Event[] };
 };
 
 export const createEvent = async (data: Omit<Event, "_id" | "isMock">) => {

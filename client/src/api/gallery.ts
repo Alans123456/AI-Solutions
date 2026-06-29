@@ -1,4 +1,5 @@
 import api from "./api";
+import { arrayResponse } from "./response";
 
 export interface GalleryImage {
   _id: string;
@@ -13,12 +14,12 @@ export interface GalleryImage {
 
 export const getGalleryImages = async (): Promise<{ images: GalleryImage[] }> => {
   const response = await api.get("/api/gallery");
-  return response.data as { images: GalleryImage[] };
+  return arrayResponse<GalleryImage>(response.data, "images") as { images: GalleryImage[] };
 };
 
 export const getAdminGalleryImages = async (): Promise<{ images: GalleryImage[] }> => {
   const response = await api.get("/api/admin/gallery");
-  return response.data as { images: GalleryImage[] };
+  return arrayResponse<GalleryImage>(response.data, "images") as { images: GalleryImage[] };
 };
 
 export const createGalleryImage = async (data: Omit<GalleryImage, "_id" | "isMock">) => {

@@ -1,4 +1,5 @@
 import api from "./api";
+import { arrayResponse } from "./response";
 
 export interface TeamMember {
   _id: string;
@@ -26,17 +27,17 @@ export interface Faq {
 
 export const getTeamMembers = async (): Promise<{ members: TeamMember[] }> => {
   const response = await api.get("/api/team");
-  return response.data as { members: TeamMember[] };
+  return arrayResponse<TeamMember>(response.data, "members") as { members: TeamMember[] };
 };
 
 export const getFaqs = async (): Promise<{ faqs: Faq[] }> => {
   const response = await api.get("/api/faqs");
-  return response.data as { faqs: Faq[] };
+  return arrayResponse<Faq>(response.data, "faqs") as { faqs: Faq[] };
 };
 
 export const getAdminTeamMembers = async (): Promise<{ members: TeamMember[] }> => {
   const response = await api.get("/api/admin/team");
-  return response.data as { members: TeamMember[] };
+  return arrayResponse<TeamMember>(response.data, "members") as { members: TeamMember[] };
 };
 
 export const createTeamMember = async (data: Omit<TeamMember, "_id" | "isMock">) => {
@@ -56,7 +57,7 @@ export const deleteTeamMember = async (id: string) => {
 
 export const getAdminFaqs = async (): Promise<{ faqs: Faq[] }> => {
   const response = await api.get("/api/admin/faqs");
-  return response.data as { faqs: Faq[] };
+  return arrayResponse<Faq>(response.data, "faqs") as { faqs: Faq[] };
 };
 
 export const createFaq = async (data: Omit<Faq, "_id" | "isMock">) => {

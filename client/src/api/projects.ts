@@ -1,4 +1,5 @@
 import api from "./api";
+import { arrayResponse } from "./response";
 
 export interface Project {
   _id: string;
@@ -18,12 +19,12 @@ export interface Project {
 
 export const getProjects = async (): Promise<{ projects: Project[] }> => {
   const response = await api.get("/api/projects");
-  return response.data as { projects: Project[] };
+  return arrayResponse<Project>(response.data, "projects") as { projects: Project[] };
 };
 
 export const getAdminProjects = async (): Promise<{ projects: Project[] }> => {
   const response = await api.get("/api/admin/projects");
-  return response.data as { projects: Project[] };
+  return arrayResponse<Project>(response.data, "projects") as { projects: Project[] };
 };
 
 export const createProject = async (data: Omit<Project, "_id" | "isMock">) => {

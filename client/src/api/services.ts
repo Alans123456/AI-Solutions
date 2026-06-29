@@ -1,4 +1,5 @@
 import api from "./api";
+import { arrayResponse } from "./response";
 
 export interface Service {
   _id: string;
@@ -15,12 +16,12 @@ export interface Service {
 
 export const getServices = async (): Promise<{ services: Service[] }> => {
   const response = await api.get("/api/services");
-  return response.data as { services: Service[] };
+  return arrayResponse<Service>(response.data, "services") as { services: Service[] };
 };
 
 export const getAdminServices = async (): Promise<{ services: Service[] }> => {
   const response = await api.get("/api/admin/services");
-  return response.data as { services: Service[] };
+  return arrayResponse<Service>(response.data, "services") as { services: Service[] };
 };
 
 export const createService = async (data: Omit<Service, "_id" | "isMock">) => {

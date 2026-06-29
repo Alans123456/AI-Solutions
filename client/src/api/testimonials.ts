@@ -1,4 +1,5 @@
 import api from "./api";
+import { arrayResponse } from "./response";
 
 export interface Testimonial {
   _id: string;
@@ -17,12 +18,12 @@ export interface Testimonial {
 
 export const getTestimonials = async (): Promise<{ testimonials: Testimonial[] }> => {
   const response = await api.get("/api/testimonials");
-  return response.data as { testimonials: Testimonial[] };
+  return arrayResponse<Testimonial>(response.data, "testimonials") as { testimonials: Testimonial[] };
 };
 
 export const getAdminTestimonials = async (): Promise<{ testimonials: Testimonial[] }> => {
   const response = await api.get("/api/admin/testimonials");
-  return response.data as { testimonials: Testimonial[] };
+  return arrayResponse<Testimonial>(response.data, "testimonials") as { testimonials: Testimonial[] };
 };
 
 export const createTestimonial = async (data: Omit<Testimonial, "_id" | "isMock">) => {
