@@ -164,6 +164,9 @@ The backend API information endpoint is available at:
 https://ai-solutions-9n7a.vercel.app/api
 ```
 
+On Vercel, the backend uses a small JSON data store in Vercel's writable runtime folder.
+Local development continues to use the SQLite file through the local helper.
+
 ---
 
 ## Default Admin Login
