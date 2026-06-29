@@ -146,6 +146,12 @@ CLIENT_ORIGIN=https://ai-solutions-black.vercel.app
 CLIENT_ORIGINS=http://localhost:5173,https://ai-solutions-black.vercel.app
 ```
 
+For the backend Vercel project, set the Root Directory to:
+
+```txt
+server
+```
+
 The backend root page is available at:
 
 ```txt
